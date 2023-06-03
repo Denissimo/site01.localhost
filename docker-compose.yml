@@ -25,6 +25,8 @@ services:
     hostname: site01_nginx
     # используем последний стабильный образ nginx
     image: nginx:latest
+    depends_on:
+      - php
 #    ports:
 #      - '80:80'
     # монтируем директории, слева директории на основной машине, справа - куда они монтируются в контейнере
@@ -48,5 +50,21 @@ services:
     volumes:
       - ./www:/var/www
       - ./images/php/:/usr/local/etc/php/conf.d/
+    depends_on:
+      - postgresql
     networks:
       - default
+  postgresql:
+    image: 'bitnami/postgresql:latest'
+    container_name: site01_postgres
+    environment:
+      - POSTGRESQL_USERNAME=site01
+      - POSTGRESQL_PASSWORD=site01
+      - POSTGRESQL_DATABASE=site01_db
+    ports:
+      - 5531:5432
+    volumes:
+      - /var/lib/postgresql/data
+    networks:
+      - default
+      - dev1
